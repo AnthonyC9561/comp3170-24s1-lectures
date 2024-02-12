@@ -1,25 +1,25 @@
-package comp3170.livelectures.week1;
+package comp3170.lectures.week1;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.io.File;
 import java.io.IOException;
 
 import comp3170.IWindowListener;
 import comp3170.OpenGLException;
-import comp3170.Shader;
 import comp3170.ShaderLibrary;
 import comp3170.Window;
 
 public class Week1 implements IWindowListener {
 	
+	final private File DIRECTORY = new File("src/comp3170/lectures/week1");
 	private Window window;
-	
+
 	private int screenWidth = 800;
 	private int screenHeight = 800;
+	private Scene scene;
 	
 	public Week1() throws OpenGLException {
 		window = new Window("COMP3170 Intro", screenWidth, screenHeight, this);
@@ -31,6 +31,10 @@ public class Week1 implements IWindowListener {
 
 	@Override
 	public void init() {
+		
+		
+		ShaderLibrary shaderibrary = new ShaderLibrary(DIRECTORY);
+		scene = new Scene(screenWidth,screenHeight);
 				
 	}
 
@@ -45,6 +49,7 @@ public class Week1 implements IWindowListener {
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		// draw the scene
+		scene.draw();
 		
 		
 	}
