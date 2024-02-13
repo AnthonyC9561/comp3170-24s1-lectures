@@ -36,9 +36,9 @@ public class Scene {
 		// @formatter:off
 		
 		vertices = new Vector4f[] {
-			new Vector4f(-1.0f,-1.0f,0.0f,1.0f),
-			new Vector4f(1.0f,-1.0f,0.0f,1.0f),
-			new Vector4f(0.5f,1.0f,0.0f,1.0f),
+			new Vector4f(-1.f,-1.0f,0.0f,1.0f), // Left
+			new Vector4f(1.f,-1.0f,0.0f,1.0f), // Right
+			new Vector4f(0.f,1.f,0.0f,1.0f), // Top
 		};
 		
 		// @formatter:On
@@ -57,7 +57,7 @@ public class Scene {
 		shader.setAttribute("a_position", vertexBuffer);
 		
 		// write the colour value into the u_colour uniform
-		Vector3f colour = new Vector3f(1.0f, 0.0f, 0.0f);
+		Vector3f colour = new Vector3f(0.0f, 0.0f, 0.0f);
 		shader.setUniform("u_colour", colour);
 
 		Vector2f screenSize = new Vector2f(screenWidth, screenHeight);

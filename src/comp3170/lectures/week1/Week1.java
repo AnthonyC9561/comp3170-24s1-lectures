@@ -3,6 +3,7 @@ package comp3170.lectures.week1;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,8 +18,8 @@ public class Week1 implements IWindowListener {
 	final private File DIRECTORY = new File("src/comp3170/lectures/week1");
 	private Window window;
 
-	private int screenWidth = 800;
-	private int screenHeight = 800;
+	private int screenWidth = 1000;
+	private int screenHeight = 1000;
 	private Scene scene;
 	
 	public Week1() throws OpenGLException {
@@ -56,7 +57,9 @@ public class Week1 implements IWindowListener {
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
+		this.screenWidth = width;
+		this.screenHeight = height;
+		glViewport(0, 0, width, height);
 		
 	}
 
