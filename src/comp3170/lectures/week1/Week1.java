@@ -24,7 +24,7 @@ public class Week1 implements IWindowListener {
 	
 	public Week1() throws OpenGLException {
 		window = new Window("COMP3170 Intro", screenWidth, screenHeight, this);
-		window.setResizable(true);
+		window.setResizable(false);
 		window.run();
 	}
 	
