@@ -34,7 +34,6 @@ public class Scene {
 		
 		// vertices of a triangle as (x,y pairs)
 		// @formatter:off
-		
 		vertices = new Vector4f[] {
 			new Vector4f(-1.f,-1.0f,0.0f,1.0f), // Left
 			new Vector4f(1.f,-1.0f,0.0f,1.0f), // Right
@@ -45,7 +44,6 @@ public class Scene {
 		
 		// copy the data into a Vertex Buffer Object in graphics memory
 		vertexBuffer = GLBuffers.createBuffer(vertices);
-		
 	}
 	
 	public void draw() {
