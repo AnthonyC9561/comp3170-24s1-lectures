@@ -27,13 +27,9 @@ public class Week1 implements IWindowListener {
 		window.setResizable(false);
 		window.run();
 	}
-	
-	
 
 	@Override
-	public void init() {
-		
-		
+	public void init() {	
 		ShaderLibrary shaderibrary = new ShaderLibrary(DIRECTORY);
 		scene = new Scene(screenWidth,screenHeight);
 				
