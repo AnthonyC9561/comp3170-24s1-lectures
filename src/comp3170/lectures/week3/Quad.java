@@ -38,10 +38,10 @@ public class Quad {
 		vertices = new Vector4f[] {
 				
 				// Bottom triangle
-				new Vector4f( 0.1f,  -0.1f, 0.0f, 1.0f), // Bottom right - C
-				new Vector4f(-0.1f,  -0.1f, 0.0f, 1.0f), // Bottom left - D
-				new Vector4f(-0.1f,   0.1f, 0.0f, 1.0f), // Top left - A
-				new Vector4f( 0.1f,   0.1f, 0.0f, 1.0f) // Top right - B
+				new Vector4f( 1.0f, -1.0f, 0.0f, 1.0f), // Bottom right - C
+				new Vector4f(-1.0f, -1.0f, 0.0f, 1.0f), // Bottom left - D
+				new Vector4f(-1.0f,  1.0f, 0.0f, 1.0f), // Top left - A
+				new Vector4f( 1.0f,  1.0f, 0.0f, 1.0f) // Top right - B
 				
 		};
 		
