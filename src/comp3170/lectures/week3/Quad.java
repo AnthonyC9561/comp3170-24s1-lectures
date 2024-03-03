@@ -9,6 +9,8 @@ import static org.lwjgl.opengl.GL15.glDrawElements;
 
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.joml.Matrix4f;
+import static comp3170.Math.TAU;
 
 import comp3170.GLBuffers;
 import comp3170.Shader;
@@ -27,6 +29,11 @@ public class Quad {
 	private int colourBuffer;
 	private Shader shader;
 	
+	private Matrix4f modelMatrix;
+	private Matrix4f transMatrix;
+	private Matrix4f rotMatrix;
+	private Matrix4f scalMatrix;
+	
 	public Quad() {
 				
 		// compile the shader
@@ -37,7 +44,6 @@ public class Quad {
 		
 		vertices = new Vector4f[] {
 				
-				// Bottom triangle
 				new Vector4f( 1.0f, -1.0f, 0.0f, 1.0f), // Bottom right - C
 				new Vector4f(-1.0f, -1.0f, 0.0f, 1.0f), // Bottom left - D
 				new Vector4f(-1.0f,  1.0f, 0.0f, 1.0f), // Top left - A
@@ -68,6 +74,21 @@ public class Quad {
 		};
 		
 		colourBuffer = GLBuffers.createBuffer(colours);
+		
+		modelMatrix = new Matrix4f();
+		transMatrix = new Matrix4f();
+		rotMatrix = new Matrix4f();
+		scalMatrix = new Matrix4f();
+		
+		modelMatrix.identity();
+		
+		translationMatrix(0.5f,0.5f, transMatrix);
+		rotationMatrix(TAU/3, rotMatrix);
+		scaleMatrix(0.1f,0.1f, scalMatrix);
+		
+		
+		modelMatrix.mul(transMatrix).mul(rotMatrix).mul(scalMatrix);
+		
 	}
 	
 	public void draw() {
@@ -81,6 +102,8 @@ public class Quad {
 		// We will need to pass this into our fragment shader as a varying ("v_colour") from our vertex shader.
 		shader.setAttribute("a_colour", colourBuffer);
 		
+		shader.setUniform("u_matrix", modelMatrix);
+		
 		// bind the buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 		
@@ -92,6 +115,50 @@ public class Quad {
 		// draw the shape
 		glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
 	}
+	
+	public static Matrix4f translationMatrix(float x, float y, Matrix4f dest) {
+		
+		//          [ 1 0 0 x ]
+		// T(x,y) = [ 0 1 0 y ]
+		//          [ 0 0 0 0 ]
+		//          [ 0 0 0 1 ]
+		
+		dest.m30(x);
+		dest.m31(y);
+		
+		return dest;
+	}
+	
+	public static Matrix4f rotationMatrix(float angle, Matrix4f dest) {
+		
+		//        [ cos(a) -sin(a) 0 0 ]
+		// R(a) = [ sin(a)  cos(a) 0 0 ]
+		//        [      0       0 0 0 ]
+		//        [      0       0 0 1 ]
+		
+		dest.m00((float) Math.cos(angle));
+		dest.m01((float) Math.sin(angle));
+		dest.m10((float) Math.sin(-angle));
+		dest.m11((float) Math.cos(angle));
+		
+		return dest;
+	}
+	
+	public static Matrix4f scaleMatrix(float sx, float sy, Matrix4f dest) {
+		
+		//           [ sx  0 0 0 ]
+		// S(sx,sy)= [ 0  sy 0 0 ]
+		//           [ 0   0 0 0 ]
+		//           [ 0   0 0 1 ]
+		
+		
+		dest.m00(sx);
+		dest.m11(sy);
+		
+		return dest;
+	}
+	
+	
 		
 
 }
