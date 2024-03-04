@@ -86,8 +86,31 @@ public class Quad {
 		rotationMatrix(TAU/3, rotMatrix);
 		scaleMatrix(0.1f,0.1f, scalMatrix);
 		
+	}
+	
+	private final float MOVEMENT_SPEED = 1.0f;
+	private final float ROTATION_SPEED = TAU/12;
+	private final float SCALE_SPEED = 0.5f;
+	
+	public void update(float deltaTime) {
+
+		float movement = MOVEMENT_SPEED * deltaTime;
+		float rotation = ROTATION_SPEED * deltaTime;
+		float scale = (float) Math.pow(SCALE_SPEED, deltaTime);
+
+//		Using built in methods:
+//		modelMatrix.identity();	// M = I	
+		modelMatrix.translate(movement, 0.0f, 0.0f); // M = M * T
+		modelMatrix.rotateZ(rotation); // M = M * R
+		modelMatrix.scale(scale); // M = M * S
 		
-		modelMatrix.mul(transMatrix).mul(rotMatrix).mul(scalMatrix);
+//		Using our methods:
+//		translationMatrix(movement, 0.0f, transMatrix);
+//		rotationMatrix(rotation, rotMatrix);
+//		modelMatrix.mul(transMatrix).mul(rotMatrix); // M = M*T*R
+		
+//		modelMatrix.mulLocal(transMatrix).mul(rotMatrix); // M = T*M*R
+		
 		
 	}
 	

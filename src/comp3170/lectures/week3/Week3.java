@@ -53,7 +53,7 @@ public class Week3 implements IWindowListener {
 		long time = System.currentTimeMillis();
 		float deltaTime = (time - oldTime) / 1000f;
 		oldTime = time;
-//		scene.update(deltaTime);
+		scene.update(deltaTime);
 		
 		
 	}

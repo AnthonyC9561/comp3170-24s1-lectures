@@ -13,7 +13,7 @@ public class Scene {
 	}
 	
 	public void update(float deltaTime) {
-//		quad.update(deltaTime);
+		quad.update(deltaTime);
 	}
 	
 	public void draw() {
