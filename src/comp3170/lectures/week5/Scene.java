@@ -6,7 +6,7 @@ public class Scene {
 	
 	public Scene() {
 		
-		gem = new Gem();
+		gem = new Gem(Colours.PURPLE);
 	}
 	
 	public void update(float deltaTime) {

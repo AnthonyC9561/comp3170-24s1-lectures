@@ -34,10 +34,6 @@ public class CoordinateFrame extends SceneObject{
 	private Shader shader;
 	private Vector3f[] colours;
 	private int colourBuffer;
-		
-	final private Vector3f T_POINT = new Vector3f(0.0f,0.0f,0.0f);
-	final private Vector3f I_AXIS = new Vector3f(1.0f,0.0f,0.0f);
-	final private Vector3f J_AXIS = new Vector3f(0.0f,1.0f,0.5f);
 
 	
 	public CoordinateFrame() {
@@ -82,21 +78,20 @@ public class CoordinateFrame extends SceneObject{
 		// vertex colours
 		
 		Vector3f[] colours = new Vector3f[] {
-				I_AXIS,
-				I_AXIS,
-				I_AXIS,
-				I_AXIS,
+				Colours.RED,
+				Colours.RED,
+				Colours.RED,
+				Colours.RED,
 				
-				J_AXIS,
-				J_AXIS,
-				J_AXIS,
-				J_AXIS,
-					
-				T_POINT,
-				T_POINT,
-				T_POINT,
-				T_POINT,
+				Colours.GREEN,
+				Colours.GREEN,
+				Colours.GREEN,
+				Colours.GREEN,
 				
+				Colours.BLACK,
+				Colours.BLACK,
+				Colours.BLACK,
+				Colours.BLACK,
 		};
 		
 		

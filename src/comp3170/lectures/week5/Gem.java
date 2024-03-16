@@ -36,10 +36,11 @@ public class Gem extends SceneObject{
 	private CoordinateFrame cf;
 
 	
-	public Gem() {
+	public Gem(Vector3f newColour) {
 		
 		modelMatrix = new Matrix4f();
 		cf = new CoordinateFrame();
+		colour = newColour;
 		
 
 		// compile the shader		
@@ -73,6 +74,14 @@ public class Gem extends SceneObject{
 		};
 		
 		indexBuffer = GLBuffers.createIndexBuffer(indices);
+	}
+	
+	public Matrix4f getMatrix() {
+		return modelMatrix;
+	}
+	
+	public void setMatrix(Matrix4f matrix) {
+		modelMatrix = matrix;
 	}
 	
 	public void draw() {
