@@ -119,7 +119,7 @@ public class CoordinateFrame extends SceneObject{
 		indexBuffer = GLBuffers.createIndexBuffer(indices);
 	}
 	
-	public void draw() {
+	public void drawSelf(Matrix4f mvpMatrix) {
 
 		// activate the shader
 		shader.enable();
@@ -130,7 +130,7 @@ public class CoordinateFrame extends SceneObject{
 		// write the colour value into the a_colour uniform
 		shader.setAttribute("a_colour", colourBuffer);
 		
-		shader.setUniform("u_matrix", modelMatrix);
+		shader.setUniform("u_matrix", mvpMatrix);
 		
 		// bind the buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);

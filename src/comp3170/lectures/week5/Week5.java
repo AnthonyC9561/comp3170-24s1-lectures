@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 import comp3170.IWindowListener;
+import comp3170.InputManager;
 import comp3170.OpenGLException;
 import comp3170.ShaderLibrary;
 import comp3170.Window;
@@ -19,6 +20,8 @@ public class Week5 implements IWindowListener {
 	private int screenHeight = 800;
 	
 	private Scene scene;
+	private InputManager input;
+	private Window window;
 		
 	private long oldTime;
 	
@@ -26,7 +29,7 @@ public class Week5 implements IWindowListener {
 	
 	public Week5() throws OpenGLException {
 		// create window with title, size, and a listener (this)
-		Window window = new Window("Week 5 Live", screenWidth, screenHeight, this);
+		window = new Window("Week 5 Live", screenWidth, screenHeight, this);
 		
 		// start running the window
 		window.run();
@@ -41,6 +44,8 @@ public class Week5 implements IWindowListener {
 		
 		new ShaderLibrary(DIRECTORY);
 		
+		input = new InputManager(window);
+		
 		scene = new Scene();
 		
 		glClearColor(0.1f,.1f,0.1f,1.0f); // RGBA - Dark Grey
@@ -53,7 +58,7 @@ public class Week5 implements IWindowListener {
 		long time = System.currentTimeMillis();
 		float deltaTime = (time - oldTime) / 1000f;
 		oldTime = time;
-		scene.update(deltaTime);
+		scene.update(input, deltaTime);
 		
 		
 	}
