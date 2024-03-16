@@ -1,4 +1,4 @@
-package comp3170.lectures.common.meshes;
+package comp3170.lectures.week5;
 
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_LINE;
@@ -21,23 +21,26 @@ import comp3170.SceneObject;
 import comp3170.Shader;
 import comp3170.ShaderLibrary;
 
-public class Emerald extends SceneObject{
+public class CoordinateFrame extends SceneObject{
 	
-	final private String VERTEX_SHADER = "vertex.glsl";
-	final private String FRAGMENT_SHADER = "fragment.glsl";
+	final private String VERTEX_SHADER = "vcolour_vertex.glsl";
+	final private String FRAGMENT_SHADER = "vcolour_fragment.glsl";
 	
 	private Vector4f[] vertices;
-	private Vector3f[] colours;
+	private int vertexBuffer;
 	private Matrix4f modelMatrix;
 	private int[] indices;
 	private int indexBuffer;
-	private int vertexBuffer;
-	private int colourBuffer;
 	private Shader shader;
-	private Vector3f colour = new Vector3f(0.3f, 1.0f, 0.5f); // Setting the shape's colour
+	private Vector3f[] colours;
+	private int colourBuffer;
+		
+	final private Vector3f T_POINT = new Vector3f(0.0f,0.0f,0.0f);
+	final private Vector3f I_AXIS = new Vector3f(1.0f,0.0f,0.0f);
+	final private Vector3f J_AXIS = new Vector3f(0.0f,1.0f,0.5f);
 
 	
-	public Emerald() {
+	public CoordinateFrame() {
 		
 		modelMatrix = new Matrix4f();
 		
@@ -46,41 +49,83 @@ public class Emerald extends SceneObject{
 		
 		shader = ShaderLibrary.instance.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 		
-		// vertices of a triangle as (x,y) pairs
+		// vertices of a coordinate frame.
 		// @formatter:off
 		
 	
-		Vector4f[] emerald = new Vector4f[] {
-				new Vector4f(-0.8f, 0.4f, 0.0f, 1.0f), // Middle left
-				new Vector4f(-0.5f, 0.8f, 0.0f, 1.0f), // Top left
-					
-				new Vector4f(0.5f,  0.8f, 0.0f, 1.0f), // Top right
-				new Vector4f(0.8f, 0.4f, 0.0f, 1.0f), // Middle right
-				
-				new Vector4f(-0.2f,  -0.8f, 0.0f, 1.0f), // Bottom left
-				new Vector4f(0.2f,  -0.8f, 0.0f, 1.0f), // Bottom right
-			};		// @formatter:On
+		Vector4f[] vertices = new Vector4f[] {
 		
-		vertices = emerald;
+				// i
+				new Vector4f(0.00f,  0.05f, 0.0f, 1.0f),
+				new Vector4f(0.00f,  0.00f, 0.0f, 1.0f),
+				new Vector4f(1.0f,   0.00f, 0.0f, 1.0f),
+				new Vector4f(1.0f,   0.05f, 0.0f, 1.0f),
+				
+				// j
+				new Vector4f(0.00f,  0.00f, 0.0f, 1.0f),
+				new Vector4f(0.05f,  0.00f, 0.0f, 1.0f),
+				new Vector4f(0.00f,  1.00f, 0.0f, 1.0f),
+				new Vector4f(0.05f,  1.00f, 0.0f, 1.0f),
+				
+				// T
+				new Vector4f(0.00f,  0.05f, 0.0f, 1.0f),
+				new Vector4f(0.00f,  0.00f, 0.0f, 1.0f),
+				new Vector4f(0.05f,  0.05f, 0.0f, 1.0f),
+				new Vector4f(0.05f,  0.00f, 0.0f, 1.0f),
+			
+		};
+			// @formatter:On
+		
 		// copy the data into a Vertex Buffer Object in graphics memory
 		vertexBuffer = GLBuffers.createBuffer(vertices);
 					
 		// vertex colours
+		
+		Vector3f[] colours = new Vector3f[] {
+				I_AXIS,
+				I_AXIS,
+				I_AXIS,
+				I_AXIS,
+				
+				J_AXIS,
+				J_AXIS,
+				J_AXIS,
+				J_AXIS,
+					
+				T_POINT,
+				T_POINT,
+				T_POINT,
+				T_POINT,
+				
+		};
+		
+		
+		colourBuffer = GLBuffers.createBuffer(colours);
+		
 		// @formatter:off
 		
 		indices = new int[] {
-			2, 3, 5,		
-			0, 1, 4,
-			1, 2, 5,
-			1, 5, 4,
+			// i
+			0, 1, 3,		
+			1, 2, 3,
+				
+			// j
+			4, 5, 6,
+			5, 7, 6,
+				
+			// T
+			9,  10, 11,
+			8,   9, 10,
 			
 		};
+		
+		// @formatter:on
 		
 		indexBuffer = GLBuffers.createIndexBuffer(indices);
 	}
 	
 	public void draw() {
-		// System.out.println("Hello");
+
 		// activate the shader
 		shader.enable();
 		
@@ -88,7 +133,7 @@ public class Emerald extends SceneObject{
 		shader.setAttribute("a_position", vertexBuffer);
 		
 		// write the colour value into the a_colour uniform
-		shader.setUniform("u_colour", colour);
+		shader.setAttribute("a_colour", colourBuffer);
 		
 		shader.setUniform("u_matrix", modelMatrix);
 		

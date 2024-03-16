@@ -43,7 +43,7 @@ public class Week5 implements IWindowListener {
 		
 		scene = new Scene();
 		
-		glClearColor(0.25f,.25f,0.25f,1.0f); // RGBA
+		glClearColor(0.1f,.1f,0.1f,1.0f); // RGBA - Dark Grey
 		
 		oldTime = System.currentTimeMillis();
 		
@@ -53,7 +53,7 @@ public class Week5 implements IWindowListener {
 		long time = System.currentTimeMillis();
 		float deltaTime = (time - oldTime) / 1000f;
 		oldTime = time;
-		// scene.update(deltaTime);
+		scene.update(deltaTime);
 		
 		
 	}

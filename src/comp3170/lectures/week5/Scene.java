@@ -1,14 +1,12 @@
 package comp3170.lectures.week5;
 
-import comp3170.lectures.common.meshes.Emerald;
-
 public class Scene {
 	
-	private Emerald emerald;
+	private Gem gem;
 	
 	public Scene() {
 		
-		emerald = new Emerald();
+		gem = new Gem();
 	}
 	
 	public void update(float deltaTime) {
@@ -16,7 +14,7 @@ public class Scene {
 	}
 	
 	public void draw() {
-		emerald.draw();
+		gem.draw();
 	}
 		
 
