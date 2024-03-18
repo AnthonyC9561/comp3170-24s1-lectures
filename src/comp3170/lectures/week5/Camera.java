@@ -28,12 +28,22 @@ public class Camera extends SceneObject {
 		
 	private Vector4f[] vertices; // Used to create camera boundary
 	private int vertexBuffer;
+	private Matrix4f viewMatrix;
+	private Matrix4f projectionMatrix;
+	private float zoom = 800f;
+	private int width;
+	private int height;
+	
 	private Vector3f colour = Colours.WHITE;
 	private Shader shader;
+	
 	
 	public Camera() {
 		
 		shader = ShaderLibrary.instance.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
+		
+		viewMatrix = new Matrix4f();
+		projectionMatrix = new Matrix4f();
 		
 		vertices = new Vector4f[] {
 				new Vector4f(-1.0f, 1.0f, 0.0f, 1.0f),
@@ -45,29 +55,61 @@ public class Camera extends SceneObject {
 		vertexBuffer = GLBuffers.createBuffer(vertices);
 	}
 	
-	private final float MOVE_SPEED = 0.5f;
+	public Matrix4f getViewMatrix(Matrix4f dest) {
+		getModelToWorldMatrix(viewMatrix);
+		viewMatrix.invert(dest);
+		return dest;
+	}
+	
+	public Matrix4f getProjectionMatrix(Matrix4f dest) {
+		projectionMatrix.identity();
+		
+		projectionMatrix.scaleXY(width / zoom, height / zoom);
+		
+		projectionMatrix.invert(dest);
+		return dest;
+	}
+	
+	public void resize(int width, int height) {
+		this.width = width;
+		this.height = height;
+	}
+	
+	private final float MOVE_SPEED = 5.0f;
+	private final float ZOOM_SPEED = 50.0f;
 	private float xPos = 0;
 	private float yPos = 0;
 		
 	public void update(InputManager input, float deltaTime) {
 		
-		float speed = MOVE_SPEED * deltaTime;
+		// Move the camera about
+		float moveSpeed = MOVE_SPEED * deltaTime;
 		if (input.isKeyDown(GLFW_KEY_A)) {
-			xPos = -speed;
+			xPos = -moveSpeed;
 			getMatrix().translate(new Vector3f(xPos,0,0));
 		}
 		if (input.isKeyDown(GLFW_KEY_D)) {
-			xPos = speed;
+			xPos = moveSpeed;
 			getMatrix().translate(new Vector3f(xPos,0,0));
 		}
 		
 		if (input.isKeyDown(GLFW_KEY_W)) {
-			yPos = speed;
+			yPos = moveSpeed;
 			getMatrix().translate(new Vector3f(0,yPos,0));
 		}
 		if (input.isKeyDown(GLFW_KEY_S)) {
-			yPos = -speed;
+			yPos = -moveSpeed;
 			getMatrix().translate(new Vector3f(0,yPos,0));
+		}
+		
+		// Zoom in and out
+		float zoomSpeed = ZOOM_SPEED * deltaTime;
+		if (input.isKeyDown(GLFW_KEY_UP)) {
+			zoom = zoom + zoomSpeed;
+		}
+		
+		if (input.isKeyDown(GLFW_KEY_DOWN)) {
+			zoom = zoom - zoomSpeed;
 		}
 		
 	}

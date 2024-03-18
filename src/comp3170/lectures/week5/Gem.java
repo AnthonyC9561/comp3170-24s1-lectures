@@ -38,9 +38,10 @@ public class Gem extends SceneObject{
 	
 	public Gem(Vector3f newColour) {
 		
-		modelMatrix = new Matrix4f();
 		cf = new CoordinateFrame();
+		cf.setParent(this);
 		colour = newColour;
+		modelMatrix = new Matrix4f();
 		
 
 		// compile the shader		
@@ -76,18 +77,8 @@ public class Gem extends SceneObject{
 		indexBuffer = GLBuffers.createIndexBuffer(indices);
 	}
 	
-	public Matrix4f getMatrix() {
-		return modelMatrix;
-	}
-	
-	public void setMatrix(Matrix4f matrix) {
-		modelMatrix = matrix;
-	}
-	
-	public void draw() {
+	public void drawSelf(Matrix4f mvpMatrix) {
 		
-
-		// System.out.println("Hello");
 		// activate the shader
 		shader.enable();
 		
@@ -97,7 +88,7 @@ public class Gem extends SceneObject{
 		// write the colour value into the a_colour uniform
 		shader.setUniform("u_colour", colour);
 		
-		shader.setUniform("u_matrix", modelMatrix);
+		shader.setUniform("u_matrix", mvpMatrix);
 		
 		// bind the buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -106,7 +97,5 @@ public class Gem extends SceneObject{
 		
 		// draw the shape
 		glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
-		
-		cf.draw();
 	}
 }
