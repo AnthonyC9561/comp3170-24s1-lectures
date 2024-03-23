@@ -8,7 +8,8 @@ import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_FRONT_AND_BACK;
 import static org.lwjgl.opengl.GL15.GL_FRONT;
-import static org.lwjgl.opengl.GL15.GL_B;
+import static org.lwjgl.opengl.GL15.GL_POINT;
+import static org.lwjgl.opengl.GL15.glPointSize;
 import static org.lwjgl.opengl.GL15.GL_FILL;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.GL_UNSIGNED_INT;
@@ -40,6 +41,8 @@ public class Gem extends SceneObject{
 	private float width = 1.0f;
 	
 	public Gem(Vector3f newColour) {	
+		
+		colour = newColour;
 
 		// compile the shader		
 		shader = ShaderLibrary.instance.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
@@ -120,6 +123,8 @@ public class Gem extends SceneObject{
 		
 		// bind the buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+		
+		glPointSize(10f);
 		
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		

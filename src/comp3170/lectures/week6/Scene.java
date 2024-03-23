@@ -16,9 +16,11 @@ public class Scene extends SceneObject{
 		
 		cam = new Camera();
 		cam.setParent(this);
+		cam.getMatrix().translate(0.0f,0.0f,0.0f);
 		
-		Gem gem = new Gem(Colours.GREEN);
-		gem.setParent(this);;
+		Gem greenGem = new Gem(Colours.GREEN);
+		greenGem.setParent(this);
+		// greenGem.getMatrix().translate(0.25f, 0.5f, 1.0f);
 	}
 	
 	public void update(InputManager input, float deltaTime) {
