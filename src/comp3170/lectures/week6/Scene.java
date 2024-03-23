@@ -12,10 +12,13 @@ public class Scene extends SceneObject{
 	
 	public Scene() {
 		cf = new CoordinateFrame();
-		cf.setParent(this);
+		// cf.setParent(this);
 		
 		cam = new Camera();
 		cam.setParent(this);
+		
+		Gem gem = new Gem(Colours.GREEN);
+		gem.setParent(this);;
 	}
 	
 	public void update(InputManager input, float deltaTime) {
