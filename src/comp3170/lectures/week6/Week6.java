@@ -40,7 +40,7 @@ public class Week6 implements IWindowListener {
 		mvpMatrix = new Matrix4f();
 		
 		// create window with title, size, and a listener (this)
-		window = new Window("Week 5 Live", screenWidth, screenHeight, this);
+		window = new Window("Week 6 Live", screenWidth, screenHeight, this);
 		window.setResizable(true);
 		
 		// start running the window

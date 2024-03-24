@@ -30,14 +30,14 @@ public class Camera extends SceneObject {
 		
 	private Matrix4f viewMatrix;
 	private Matrix4f projectionMatrix;
-	private float zoom = 800f;
 	private int width;
 	private int height;
 	
-		private static final float ASPECT = 1;
-		private static float FOVY = TAU / 6;
-		private static final float NEAR = 0.1f;
-		private static final float FAR = 30f;
+	private static final float ASPECT = 1;
+	private static final float NEAR = 0.1f;
+	private static final float FAR = 30.0f;
+	
+	private float fovY = TAU/6;
 	
 	
 	public Camera() {	
@@ -52,11 +52,11 @@ public class Camera extends SceneObject {
 	}
 	
 	public Matrix4f getProjectionMatrix(Matrix4f dest) {
-		//projectionMatrix.identity();
+		dest.identity();
 		
-		projectionMatrix.setPerspective(FOVY, ASPECT, NEAR, FAR);
+		dest.setPerspective(fovY, ASPECT, NEAR, FAR);
 		
-		projectionMatrix.invert(dest);
+		// projectionMatrix.invert(dest);
 		return dest;
 	}
 	
@@ -66,50 +66,47 @@ public class Camera extends SceneObject {
 	}
 	
 	private final float ROTATE_SPEED = TAU/6;
-	private final float MOVE_SPEED = 3.0f;
-	private float xPos = 0;
-	private float yPos = 0;
+	private final float ZOOM_SPEED = 50.0f;
+	private final float MOVE_SPEED = 5.0f;
 		
 	public void update(InputManager input, float deltaTime) {
 		
 		// Rotate the camera
 		float rotSpeed = ROTATE_SPEED * deltaTime;
 		if (input.isKeyDown(GLFW_KEY_A)) {
-			getMatrix().rotateLocalY(rotSpeed);
+			getMatrix().rotateLocalY(-rotSpeed);
 		}
 		if (input.isKeyDown(GLFW_KEY_D)) {
-			getMatrix().rotateLocalY(-rotSpeed);
+			getMatrix().rotateLocalY(rotSpeed);
 		}
 		if (input.isKeyDown(GLFW_KEY_W)) {
 			getMatrix().rotateLocalX(-rotSpeed);
 		}
 		if (input.isKeyDown(GLFW_KEY_S)) {
-			yPos = -rotSpeed;
 			getMatrix().rotateLocalX(rotSpeed);
 		}
 		
-		// Moving in and out
-		float movementSpeed = MOVE_SPEED * deltaTime;
-		if (input.isKeyDown(GLFW_KEY_UP)) {
-			getMatrix().translate(0,0,-movementSpeed);
+		// Zoom in and out
+		float zoomSpeed = TAU/12 * deltaTime;
+		if (input.isKeyDown(GLFW_KEY_DOWN)) {
+			fovY += zoomSpeed;
 		}
 		
-		if (input.isKeyDown(GLFW_KEY_DOWN)) {
-			getMatrix().translate(0,0,movementSpeed);
+		if (input.isKeyDown(GLFW_KEY_UP)) {
+			fovY -= zoomSpeed;
+		}
+		
+		// Move camera in and out
+		float moveSpeed = MOVE_SPEED * deltaTime;
+		if (input.isKeyDown(GLFW_KEY_L)) {
+			getMatrix().translate(0.0f,0.0f,moveSpeed);
+		}
+		if (input.isKeyDown(GLFW_KEY_O)) {
+			getMatrix().translate(0.0f,0.0f,-moveSpeed);
 		}
 		
 		if (input.isKeyDown(GLFW_KEY_Q)) {
 			getMatrix().identity();
-		}
-		
-		// Zooming in and out
-		float zoomSpeed = TAU/12 * deltaTime;
-		if (input.isKeyDown(GLFW_KEY_LEFT)) {
-			FOVY -= zoomSpeed;
-		}
-		
-		if (input.isKeyDown(GLFW_KEY_RIGHT)) {
-			FOVY += zoomSpeed;
 		}
 		
 	}

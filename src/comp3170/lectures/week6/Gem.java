@@ -8,9 +8,9 @@ import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_FRONT_AND_BACK;
 import static org.lwjgl.opengl.GL15.GL_FRONT;
+import static org.lwjgl.opengl.GL15.GL_FILL;
 import static org.lwjgl.opengl.GL15.GL_POINT;
 import static org.lwjgl.opengl.GL15.glPointSize;
-import static org.lwjgl.opengl.GL15.GL_FILL;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.GL_UNSIGNED_INT;
 
@@ -31,14 +31,17 @@ public class Gem extends SceneObject{
 	final private String FRAGMENT_SHADER = "fragment.glsl";
 	
 	private Vector4f[] vertices;
+	private int vertexBuffer;
 	private int[] indices;
 	private int indexBuffer;
-	private int vertexBuffer;
 	private Shader shader;
+	
 	private Vector3f colour = new Vector3f(0.3f, 0.0f, 0.5f); // Setting the shape's colour
 	private int NSides = 6;
-	private float height = 1.0f;
+	private int NLayers = 2;
+	private float height = 1.5f;
 	private float width = 1.0f;
+	private float offset = -1.0f;
 	
 	public Gem(Vector3f newColour) {	
 		
@@ -47,24 +50,17 @@ public class Gem extends SceneObject{
 		// compile the shader		
 		shader = ShaderLibrary.instance.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 		
-		// @formatter:off	
-		vertices = new Vector4f[NSides * 2 + 2];
+		vertices = new Vector4f[(NSides * NLayers) + 2];
 		
-		vertices[0] = new Vector4f(0.0f, -1.0f, 0.0f, 1.0f);
+		vertices[0] = new Vector4f(0.0f, offset, 0.0f, 1.0f);
 		
-		for (int i = 1; i < vertices.length - (NSides + 1); i ++) {
+		for (int i = 1; i < vertices.length - (NSides + 1); i++) {
 			float angle = (i * TAU) / NSides;
-			Vector4f vert = new Vector4f(
-					(float) Math.sin(angle) * width,height * 0.5f, (float) Math.cos(angle) * width, 1.0f);
+			Vector4f vert = new Vector4f((float) Math.sin(angle) * width, offset + (height * 0.75f), (float) Math.cos(angle) * width, 1.0f);
 			vertices[i] = vert;
-			vertices[i + NSides] = new Vector4f(vert.x * (width * 0.75f),height,vert.z * (width * 0.75f),vert.w);
+			vertices[i+NSides] = new Vector4f(vert.x * (width * 0.75f), offset + height, vert.z  * (width * 0.75f), vert.w);
 		}
-		
-		vertices[vertices.length - 1] = new Vector4f(0.0f,height,0.0f,1.0f); 
-		for (int i = 0; i < vertices.length; i++) {
-			System.out.println(vertices[i]);
-		}
-		
+		vertices[vertices.length - 1] = new Vector4f(0.0f, offset + height, 0.0f, 1.0f);
 
 		// copy the data into a Vertex Buffer Object in graphics memory
 		vertexBuffer = GLBuffers.createBuffer(vertices);
@@ -96,7 +92,7 @@ public class Gem extends SceneObject{
 			
 			12, 1, 6,
 			7, 12, 1,
-						
+			
 			13, 7, 8,
 			13, 8, 9,
 			13, 9, 10,
@@ -124,9 +120,7 @@ public class Gem extends SceneObject{
 		// bind the buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 		
-		glPointSize(10f);
-		
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPolygonMode(GL_FRONT, GL_FILL);
 		
 		// draw the shape
 		glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
