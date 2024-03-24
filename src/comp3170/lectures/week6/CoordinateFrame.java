@@ -33,19 +33,15 @@ public class CoordinateFrame extends SceneObject{
 	private Shader shader;
 	private Vector3f[] colours;
 	private int colourBuffer;
-
 	
 	public CoordinateFrame() {
-		
 
 		// compile the shader
 		
 		shader = ShaderLibrary.instance.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 		
 		// vertices of a coordinate frame.
-		// @formatter:off
-		
-	
+		// @formatter:off	
 		vertices = new Vector4f[] {
 		
 				// i
@@ -59,7 +55,6 @@ public class CoordinateFrame extends SceneObject{
 				// k
 				new Vector4f(0.00f,  0.00f, 0.0f, 1.0f),
 				new Vector4f(0.00f,  0.00f, 1.0f, 1.0f),
-			
 		};
 			// @formatter:On
 		
@@ -67,7 +62,6 @@ public class CoordinateFrame extends SceneObject{
 		vertexBuffer = GLBuffers.createBuffer(vertices);
 					
 		// vertex colours
-		
 		Vector3f[] colours = new Vector3f[] {
 				Colours.RED,
 				Colours.RED,
@@ -78,7 +72,6 @@ public class CoordinateFrame extends SceneObject{
 				Colours.BLUE,
 				Colours.BLUE,
 		};
-		
 		
 		colourBuffer = GLBuffers.createBuffer(colours);
 		
