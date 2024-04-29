@@ -6,6 +6,7 @@ import comp3170.lectures.week9.cameras.Camera;
 import comp3170.lectures.week9.cameras.DebugCamera;
 import comp3170.lectures.week9.lights.Light;
 import comp3170.lectures.week9.sceneobjects.Axes3D;
+import comp3170.lectures.week9.sceneobjects.Torus;
 
 /**
  * Template code for a Scene.
@@ -28,6 +29,9 @@ public class Scene extends SceneObject {
 
 		Axes3D axes = new Axes3D();
 		axes.setParent(this);
+		
+		Torus torus = new Torus();
+		torus.setParent(this);
 		
 		camera = new DebugCamera();
 		camera.setParent(this);

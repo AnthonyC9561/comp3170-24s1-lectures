@@ -3,6 +3,7 @@ package comp3170.lectures.week9;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glClearDepth;
@@ -36,7 +37,7 @@ public class Week9 implements IWindowListener {
 	private Scene scene;
 
 	public Week9() throws OpenGLException {
-		window = new Window("Demo", screenWidth, screenHeight, this);
+		window = new Window("Torus demo", screenWidth, screenHeight, this);
 		window.run();
 	}
 
@@ -45,6 +46,7 @@ public class Week9 implements IWindowListener {
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearDepth(1f);
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
 
 		// set up shader library instance
 		ShaderLibrary shaderLibrary = new ShaderLibrary(SHADERS_DIR);
