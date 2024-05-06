@@ -27,8 +27,9 @@ void main() {
 	vec3 diffuse = u_intensity * u_diffuseColour * max(0, dot(s,n));
 	vec3 specular = vec3(0);
 	
+	// check whether the surface is facing the light
 	if (dot(s,n) > 0) {
-		specular = u_intensity * u_specularColour * pow(dot(r,v), u_shininess);		
+		specular = u_intensity * u_specularColour * pow(max(0,dot(r,v)), u_shininess);		
 	}
 		
 	vec3 intensity = ambient + diffuse + specular;
