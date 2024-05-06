@@ -29,7 +29,8 @@ void main() {
 	
 	// check whether the surface is facing the light
 	if (dot(s,n) > 0) {
-		// note: pow(x,y) is undefined if x < 0, so add max(0) to prevent this case 
+		// note: pow(x,y) is undefined if x < 0, so add max(0) to prevent this case
+		// https://docs.gl/sl4/pow 
 		specular = u_intensity * u_specularColour * pow(max(0,dot(r,v)), u_shininess);		
 	}
 		
