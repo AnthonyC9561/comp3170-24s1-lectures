@@ -29,11 +29,12 @@ void main() {
 	
 	// check whether the surface is facing the light
 	if (dot(s,n) > 0) {
+		// note: pow(x,y) is undefined if x < 0, so add max(0) to prevent this case 
 		specular = u_intensity * u_specularColour * pow(max(0,dot(r,v)), u_shininess);		
 	}
 		
 	vec3 intensity = ambient + diffuse + specular;
 	
-    o_colour = vec4(intensity, 1); // Add an alpha value of 1
+    o_colour = vec4(specular, 1); // Add an alpha value of 1
 }
 
