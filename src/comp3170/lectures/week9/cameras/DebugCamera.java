@@ -7,6 +7,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 
 import comp3170.InputManager;
 import comp3170.SceneObject;
@@ -22,6 +23,14 @@ public class DebugCamera extends SceneObject implements Camera {
 		
 	}
 	
+	private Matrix4f modelMatrix = new Matrix4f();
+	@Override
+	public Vector4f getDirection(Vector4f dest) {
+		// for an orthographic camera, the view vector 
+		// is equal to the k axis of the model matrix
+		return getModelToWorldMatrix(modelMatrix).getColumn(2, dest);
+	}
+
 	@Override
 	public Matrix4f getViewMatrix(Matrix4f dest) {
 		return getModelToWorldMatrix(dest).normalize3x3().invert();
@@ -38,7 +47,7 @@ public class DebugCamera extends SceneObject implements Camera {
 	private static final float DISTANCE = 5;
 
 	@Override
-	public void update(float deltaTime, InputManager input) {
+	public void update(InputManager input, float deltaTime) {
 		
 		if (input.isKeyDown(GLFW_KEY_UP)) {
 			pitch -= ROTATION_SPEED * deltaTime;
