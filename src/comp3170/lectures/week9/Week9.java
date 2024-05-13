@@ -1,16 +1,16 @@
 package comp3170.lectures.week9;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_FRONT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glClearDepth;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glViewport;
-import static org.lwjgl.opengl.GL11.glCullFace;
+
+import java.io.File;
 
 import org.joml.Matrix4f;
 
@@ -18,6 +18,7 @@ import comp3170.IWindowListener;
 import comp3170.InputManager;
 import comp3170.OpenGLException;
 import comp3170.ShaderLibrary;
+import comp3170.TextureLibrary;
 import comp3170.Window;
 import comp3170.lectures.week9.cameras.Camera;
 
@@ -30,6 +31,7 @@ import comp3170.lectures.week9.cameras.Camera;
 public class Week9 implements IWindowListener {
 
 	private static final String SHADERS_DIR = "src/comp3170/lectures/week9/shaders";
+	private static final String TEXTURES_DIR = "src/comp3170/lectures/week9/textures";
 	private Window window;
 	private int screenWidth = 1000;
 	private int screenHeight = 1000;
@@ -50,8 +52,8 @@ public class Week9 implements IWindowListener {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 
-		// set up shader library instance
-		ShaderLibrary shaderLibrary = new ShaderLibrary(SHADERS_DIR);
+		new ShaderLibrary(SHADERS_DIR);
+		new TextureLibrary(new File(TEXTURES_DIR));
 
 		scene = new Scene();
 

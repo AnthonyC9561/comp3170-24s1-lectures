@@ -7,6 +7,7 @@ import comp3170.lectures.week9.cameras.DebugCamera;
 import comp3170.lectures.week9.lights.DemoLight;
 import comp3170.lectures.week9.lights.Light;
 import comp3170.lectures.week9.sceneobjects.Axes3D;
+import comp3170.lectures.week9.sceneobjects.Projection;
 import comp3170.lectures.week9.sceneobjects.Torus;
 
 /**
@@ -22,6 +23,7 @@ public class Scene extends SceneObject {
 	private DebugCamera camera;
 	private Light light;
 	private Torus torus;
+	private Projection projection;
 
 	public Scene() {
 		if (instance != null) {
@@ -34,6 +36,9 @@ public class Scene extends SceneObject {
 		
 		torus = new Torus();
 		torus.setParent(this);
+		
+		projection = new Projection();
+		projection.setParent(this);
 		
 		camera = new DebugCamera();
 		camera.setParent(this);
@@ -51,6 +56,7 @@ public class Scene extends SceneObject {
 
 	public void update(InputManager input, float deltaTime) {
 		torus.update(input, deltaTime);
+		projection.update(input, deltaTime);
 		camera.update(input, deltaTime);
 	}
 }

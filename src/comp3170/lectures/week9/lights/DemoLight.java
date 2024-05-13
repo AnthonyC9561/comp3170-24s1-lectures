@@ -6,7 +6,7 @@ import org.joml.Vector4f;
 public class DemoLight implements Light {
 
 	private Vector4f direction = new Vector4f(0,1,0,0); 
-	private Vector3f ambient = new Vector3f(0.1f, 0.1f, 0.1f); 
+	private Vector3f ambient = new Vector3f(0.05f, 0.05f, 0.05f); 
 	private Vector3f intensity = new Vector3f(1f, 1f, 1f); 
 	
 	@Override	

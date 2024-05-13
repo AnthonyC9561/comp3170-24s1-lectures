@@ -1,23 +1,35 @@
 package comp3170.lectures.week9.sceneobjects;
 
 import static comp3170.Math.TAU;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.opengl.GL11.GL_POINTS;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.opengl.GL11.GL_FILL;
+import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
+import static org.lwjgl.opengl.GL11.GL_REPEAT;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL11.glPolygonMode;
+import static org.lwjgl.opengl.GL11.glTexParameteri;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE1;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glPolygonMode;
-import static org.lwjgl.opengl.GL15.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL15.GL_LINE;
-import static org.lwjgl.opengl.GL15.GL_FILL;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL30.glGenerateMipmap;
+import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -26,13 +38,14 @@ import comp3170.InputManager;
 import comp3170.SceneObject;
 import comp3170.Shader;
 import comp3170.ShaderLibrary;
+import comp3170.TextureLibrary;
 import comp3170.lectures.week9.Scene;
 import comp3170.lectures.week9.cameras.Camera;
 import comp3170.lectures.week9.lights.Light;
 
 public class Torus extends SceneObject {
 
-	private static final int NSIDES = 12;
+	private static final int NSIDES = 24;
 	private static final int NSLICES = 24;
 	private static final int CROSS_SECTION_RADIUS = 1;
 	private static final int TORUS_RADIUS = 3;
@@ -41,40 +54,84 @@ public class Torus extends SceneObject {
 	private final static String FRAGMENT_SHADER = "lightingFragment.glsl";
 	private final static String NORMAL_VERTEX_SHADER = "normalVertex.glsl";
 	private final static String NORMAL_FRAGMENT_SHADER = "normalFragment.glsl";
+	private final static String TEXTURE_VERTEX_SHADER = "textureVertex.glsl";
+	private final static String TEXTURE_FRAGMENT_SHADER = "textureFragment.glsl";
 
+	private final static String DIFFUSE_TEXTURE = "wood_planks_diffuse.jpg";
+	private final static String SPECULAR_TEXTURE = "wood_planks_specular.jpg";
+
+	private final static Vector2f UV_MAX = new Vector2f(8,1);
+
+	
 	private Shader lightingShader;
 	private Shader normalShader;
+	private Shader textureShader;
 
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private Vector4f[] normals;
 	private int normalBuffer;
+	private Vector2f[] uvs;
+	private int uvBuffer;
 	private int[] indices;
 	private int indexBuffer;
 	private Vector4f[] circlePoints;
 	private Vector4f[] circleNormals;
+	private int diffuseTexture;
+	private int specularTexture;
+
 
 	public Torus() {
 		lightingShader = ShaderLibrary.instance.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 		lightingShader.setStrict(false);
 		normalShader = ShaderLibrary.instance.compileShader(NORMAL_VERTEX_SHADER, NORMAL_FRAGMENT_SHADER);
 		normalShader.setStrict(false);
+		textureShader = ShaderLibrary.instance.compileShader(TEXTURE_VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER);
+		textureShader.setStrict(false);
 
 		createCrossSection();
 		createAttributeBuffers();
 		createIndexBuffer();
+		loadTextures();
+		
+//		DebugNormals n = new DebugNormals(vertices, normals);
+//		n.setParent(this);
+	}
+
+	private void loadTextures() {		
+		try {
+			diffuseTexture = TextureLibrary.instance.loadTexture(DIFFUSE_TEXTURE);
+			specularTexture = TextureLibrary.instance.loadTexture(SPECULAR_TEXTURE);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 			
+
+		// set the texture we are currently working with
+		glBindTexture(GL_TEXTURE_2D, diffuseTexture);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // S is U - horizontal
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // T is V - vertical
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		glBindTexture(GL_TEXTURE_2D, specularTexture);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // S is U - horizontal
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // T is V - vertical
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glGenerateMipmap(GL_TEXTURE_2D);	
 	}
 
 	private void createCrossSection() {
 
-		circlePoints = new Vector4f[NSIDES];
-		circleNormals = new Vector4f[NSIDES];
+		circlePoints = new Vector4f[NSIDES+1];
+		circleNormals = new Vector4f[NSIDES+1];
 
 		circlePoints[0] = new Vector4f(CROSS_SECTION_RADIUS, 0, 0, 1);
 		circleNormals[0] = new Vector4f(1, 0, 0, 0);
 		Matrix4f rotation = new Matrix4f();
 
-		for (int i = 1; i < NSIDES; i++) {
+		for (int i = 1; i <= NSIDES; i++) {
 			float angle = i * TAU / NSIDES;
 
 			rotation.rotationZ(angle);
@@ -86,73 +143,84 @@ public class Torus extends SceneObject {
 
 	private void createAttributeBuffers() {
 
-		vertices = new Vector4f[NSIDES * NSLICES];
-		normals = new Vector4f[NSIDES * NSLICES];
+		int nVertices = (NSIDES + 1) * (NSLICES + 1);		
+		vertices = new Vector4f[nVertices];
+		normals = new Vector4f[nVertices];
+		uvs = new Vector2f[nVertices];
 
-		int vk = 0;
-		int nk = 0;
+		int k = 0;
 
 		Matrix4f rotation = new Matrix4f();
 		Matrix4f translation = new Matrix4f();
 
-		for (int i = 0; i < NSLICES; i++) {
+		for (int i = 0; i <= NSLICES; i++) {
 			float angle = i * TAU / NSLICES;
 
-			for (int j = 0; j < NSIDES; j++) {
+			for (int j = 0; j <= NSIDES; j++) {
 				// move out to TORUS_RADIUS then rotate in world coordinates
 				rotation.rotationY(angle);
 				translation.translation(TORUS_RADIUS, 0, 0);
 								
 				// In JOML vector multiplication is on the left
 				// v = R * (T * cj)				
-				vertices[vk++] = new Vector4f()
+				vertices[k] = new Vector4f()
 					.set(circlePoints[j])
 					.mul(translation)
 					.mul(rotation);
-				normals[nk++] = new Vector4f()
+				normals[k] = new Vector4f()
 					.set(circleNormals[j])
 					.mul(rotation);
+				
+				uvs[k] = new Vector2f(i * UV_MAX.x / NSLICES, j * UV_MAX.y / NSIDES);
+								
+				k++;
 			}
 		}
 
 		vertexBuffer = GLBuffers.createBuffer(vertices);
 		normalBuffer = GLBuffers.createBuffer(normals);
+		uvBuffer = GLBuffers.createBuffer(uvs);
 	}
 
 	private void createIndexBuffer() {
 
 		// @formatter:off
 
-		//  0 --  n  -- ... -- (m-1)n -- 0
+		// n = NSIDES
+		// m = NSLICES
+		
+		//  0 --  n+1  -- ... -- (m-1)n -- m n
 		//  |  /  |                    /
-		//  1 -- n+1 -- ... --        -- 1
+		//  1 -- n+2 -- ... --        -- m + v1
 		//  |  /  |
 		//  2 -- ...
 		//  |     |
 		// ...   ...
 		//  |     |
-		// n-1 - 2n-1
+		// n-1 - 2n
 		//  |  /  |
-		//  0 --- n
+		//  n --- 2n+1
 
 		// @formatter:on
 
 		indices = new int[NSLICES * NSIDES * 2 * 3];
 
+		int n = NSIDES + 1;
+		
 		int k = 0;
 		for (int i = 0; i < NSIDES; i++) {
 			for (int j = 0; j < NSLICES; j++) {
 
-				int i1 = (i + 1) % NSIDES;
-				int j1 = (j + 1) % NSLICES;
+				int i1 = (i + 1);
+				int j1 = (j + 1);
 
-				indices[k++] = j * NSIDES + i;
-				indices[k++] = j1 * NSIDES + i;
-				indices[k++] = j * NSIDES + i1;
+				indices[k++] = j * n + i;
+				indices[k++] = j1 * n + i;
+				indices[k++] = j * n+ i1;
 
-				indices[k++] = j1 * NSIDES + i1;
-				indices[k++] = j * NSIDES + i1;
-				indices[k++] = j1 * NSIDES + i;
+				indices[k++] = j1 * n + i1;
+				indices[k++] = j * n + i1;
+				indices[k++] = j1 * n + i;
 			}
 		}
 
@@ -163,7 +231,7 @@ public class Torus extends SceneObject {
 	private Matrix4f normalMatrix = new Matrix4f();
 	private Vector3f diffuseColour = new Vector3f(1, 0, 0);
 	private Vector3f specularColour = new Vector3f(1, 1, 1);
-	private float shininess = 1;
+	private float shininess = 20;
 	
 	private Vector3f ambient = new Vector3f();
 	private Vector3f intensity = new Vector3f();
@@ -173,6 +241,7 @@ public class Torus extends SceneObject {
 
 	@Override
 	public void drawSelf(Matrix4f mvpMatrix) {
+//		Shader shader = textureShader;
 		Shader shader = lightingShader;
 //		Shader shader = normalShader;
 		shader.enable();
@@ -184,8 +253,19 @@ public class Torus extends SceneObject {
 
 		shader.setAttribute("a_position", vertexBuffer);
 		shader.setAttribute("a_normal", normalBuffer);
+		shader.setAttribute("a_texcoord", uvBuffer);
 
 		// material
+		
+		glActiveTexture(GL_TEXTURE0);	// GPU buffer 0
+		glBindTexture(GL_TEXTURE_2D, diffuseTexture);	// Bind texture to active gpu texture buffer  
+		shader.setUniform("u_diffuseTexture", 0);
+
+		glActiveTexture(GL_TEXTURE1);	// GPU buffer 1
+		glBindTexture(GL_TEXTURE_2D, specularTexture);	// Bind texture to active gpu texture buffer  
+		shader.setUniform("u_specularTexture", 1);
+
+		
 		shader.setUniform("u_diffuseColour", diffuseColour);
 		shader.setUniform("u_specularColour", specularColour);		
 		shader.setUniform("u_shininess", shininess);		
