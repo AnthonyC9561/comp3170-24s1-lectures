@@ -265,7 +265,6 @@ public class Torus extends SceneObject {
 		glBindTexture(GL_TEXTURE_2D, specularTexture);	// Bind texture to active gpu texture buffer  
 		shader.setUniform("u_specularTexture", 1);
 
-		
 		shader.setUniform("u_diffuseColour", diffuseColour);
 		shader.setUniform("u_specularColour", specularColour);		
 		shader.setUniform("u_shininess", shininess);		
@@ -279,8 +278,7 @@ public class Torus extends SceneObject {
 		// camera
 		Camera camera = Scene.instance.getCamera();
 		shader.setUniform("u_cameraDirection", camera.getDirection(cameraDirection));
-		
-		
+				
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);

@@ -12,8 +12,8 @@ uniform vec4 u_lightDirection; // WORLD
 uniform vec4 u_cameraDirection; // WORLD
 
 // material
-uniform vec3 u_diffuseColour;
-uniform vec3 u_specularColour;
+uniform sampler2D u_diffuseTexture;
+uniform sampler2D u_specularTexture;
 uniform float u_shininess;	// Phong exponent
 
 const vec3 GAMMA = vec3(2.2); // (2.2, 2.2, 2.2)
@@ -30,14 +30,17 @@ vec3 toBrightness(vec3 intensity) {
 	return pow(intensity, 1./GAMMA);
 }
 
+
 void main() {
 	vec4 s = normalize(u_lightDirection);
 	vec4 n = normalize(v_normal);		
 	vec4 r = -reflect(s,n);
 	vec4 v = normalize(u_cameraDirection);		
 		
-	vec3 dMaterial = toIntensity(u_diffuseColour);	
-	vec3 sMaterial = toIntensity(u_specularColour);	
+	vec3 dMaterial = texture(u_diffuseTexture, v_texcoord).rgb;	// BRIGHTNESS
+	dMaterial = toIntensity(dMaterial);	
+	vec3 sMaterial = texture(u_specularTexture, v_texcoord).rgb;	// BRIGHTNESS
+	sMaterial = toIntensity(sMaterial);	
 		
 	vec3 ambient = u_ambient * dMaterial; 
 	vec3 diffuse = u_intensity * dMaterial * max(0, dot(s,n));
