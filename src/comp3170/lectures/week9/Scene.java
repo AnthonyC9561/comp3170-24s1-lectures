@@ -32,13 +32,13 @@ public class Scene extends SceneObject {
 		instance = this;
 
 		Axes3D axes = new Axes3D();
-		axes.setParent(this);
+//		axes.setParent(this);
 		
 		torus = new Torus();
 		torus.setParent(this);
 		
 		projection = new Projection();
-		projection.setParent(this);
+//		projection.setParent(this);
 		
 		camera = new DebugCamera();
 		camera.setParent(this);

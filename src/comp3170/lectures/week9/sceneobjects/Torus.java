@@ -51,10 +51,10 @@ public class Torus extends SceneObject {
 	private static final int CROSS_SECTION_RADIUS = 1;
 	private static final int TORUS_RADIUS = 3;
 
-	private final static String VERTEX_SHADER = "textureLightingVertex.glsl";
-	private final static String FRAGMENT_SHADER = "textureLightingFragment.glsl";
-//	private final static String VERTEX_SHADER = "lightingVertex.glsl";
-//	private final static String FRAGMENT_SHADER = "lightingFragment.glsl";
+//	private final static String VERTEX_SHADER = "textureLightingVertex.glsl";
+//	private final static String FRAGMENT_SHADER = "textureLightingFragment.glsl";
+	private final static String VERTEX_SHADER = "lightingVertex.glsl";
+	private final static String FRAGMENT_SHADER = "lightingFragment.glsl";
 	private final static String NORMAL_VERTEX_SHADER = "normalVertex.glsl";
 	private final static String NORMAL_FRAGMENT_SHADER = "normalFragment.glsl";
 	private final static String TEXTURE_VERTEX_SHADER = "projectedTextureVertex.glsl";
@@ -113,10 +113,10 @@ public class Torus extends SceneObject {
 		glBindTexture(GL_TEXTURE_2D, diffuseTexture);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // S is U - horizontal
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // T is V - vertical
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		glBindTexture(GL_TEXTURE_2D, specularTexture);
@@ -248,8 +248,8 @@ public class Torus extends SceneObject {
 
 	@Override
 	public void drawSelf(Matrix4f mvpMatrix) {
-		Shader shader = textureShader;
-//		Shader shader = lightingShader;
+//		Shader shader = textureShader;
+		Shader shader = lightingShader;
 //		Shader shader = normalShader;
 		shader.enable();
 
