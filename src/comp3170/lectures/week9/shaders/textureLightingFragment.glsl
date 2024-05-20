@@ -43,14 +43,14 @@ void main() {
 	sMaterial = toIntensity(sMaterial);	
 		
 	vec3 ambient = u_ambient * dMaterial; 
-	vec3 diffuse = u_intensity * dMaterial * max(0, dot(s,n));
+	vec3 diffuse = u_intensity * dMaterial * max(0, dot(s,n));	// Lambert's Law
 	vec3 specular = vec3(0);
 	
 	// check whether the surface is facing the light
 	if (dot(s,n) > 0) {
 		// note: pow(x,y) is undefined if x < 0, so add max(0) to prevent this case
 		// https://docs.gl/sl4/pow 
-		specular = u_intensity * sMaterial * pow(max(0,dot(r,v)), u_shininess);		
+		specular = u_intensity * sMaterial * pow(max(0,dot(r,v)), u_shininess);	// Phong's equation		
 	}
 		
 	vec3 intensity = ambient + diffuse + specular;

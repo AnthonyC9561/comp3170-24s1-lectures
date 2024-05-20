@@ -24,6 +24,7 @@ import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
@@ -50,12 +51,14 @@ public class Torus extends SceneObject {
 	private static final int CROSS_SECTION_RADIUS = 1;
 	private static final int TORUS_RADIUS = 3;
 
-	private final static String VERTEX_SHADER = "lightingVertex.glsl";
-	private final static String FRAGMENT_SHADER = "lightingFragment.glsl";
+	private final static String VERTEX_SHADER = "textureLightingVertex.glsl";
+	private final static String FRAGMENT_SHADER = "textureLightingFragment.glsl";
+//	private final static String VERTEX_SHADER = "lightingVertex.glsl";
+//	private final static String FRAGMENT_SHADER = "lightingFragment.glsl";
 	private final static String NORMAL_VERTEX_SHADER = "normalVertex.glsl";
 	private final static String NORMAL_FRAGMENT_SHADER = "normalFragment.glsl";
-	private final static String TEXTURE_VERTEX_SHADER = "textureVertex.glsl";
-	private final static String TEXTURE_FRAGMENT_SHADER = "textureFragment.glsl";
+	private final static String TEXTURE_VERTEX_SHADER = "projectedTextureVertex.glsl";
+	private final static String TEXTURE_FRAGMENT_SHADER = "projectedTextureFragment.glsl";
 
 	private final static String DIFFUSE_TEXTURE = "wood_planks_diffuse.jpg";
 	private final static String SPECULAR_TEXTURE = "wood_planks_specular.jpg";
@@ -110,8 +113,10 @@ public class Torus extends SceneObject {
 		glBindTexture(GL_TEXTURE_2D, diffuseTexture);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // S is U - horizontal
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // T is V - vertical
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		glBindTexture(GL_TEXTURE_2D, specularTexture);
@@ -229,6 +234,8 @@ public class Torus extends SceneObject {
 
 	private Matrix4f modelMatrix = new Matrix4f();
 	private Matrix4f normalMatrix = new Matrix4f();
+	private Matrix4f uvMatrix = new Matrix4f();
+
 	private Vector3f diffuseColour = new Vector3f(1, 0, 0);
 	private Vector3f specularColour = new Vector3f(1, 1, 1);
 	private float shininess = 20;
@@ -241,20 +248,30 @@ public class Torus extends SceneObject {
 
 	@Override
 	public void drawSelf(Matrix4f mvpMatrix) {
-//		Shader shader = textureShader;
-		Shader shader = lightingShader;
+		Shader shader = textureShader;
+//		Shader shader = lightingShader;
 //		Shader shader = normalShader;
 		shader.enable();
 
+		// Coordinate frrames
+		
 		getModelToWorldMatrix(modelMatrix);
 		
 		shader.setUniform("u_mvpMatrix", mvpMatrix);
+		shader.setUniform("u_modelMatrix", modelMatrix);
 		shader.setUniform("u_normalMatrix", modelMatrix.normal(normalMatrix));
 
+		Projection projection = Scene.instance.getProjection();
+		projection.getModelToWorldMatrix(uvMatrix);	// UV -> WORLD
+		uvMatrix.invert();	// WORLD -> UV
+		shader.setUniform("u_uvMatrix", uvMatrix);
+
+		// Attributes
+		
 		shader.setAttribute("a_position", vertexBuffer);
 		shader.setAttribute("a_normal", normalBuffer);
-		shader.setAttribute("a_texcoord", uvBuffer);
-
+		shader.setAttribute("a_texcoord", uvBuffer);		
+		
 		// material
 		
 		glActiveTexture(GL_TEXTURE0);	// GPU buffer 0

@@ -53,6 +53,10 @@ public class Scene extends SceneObject {
 	public Light getLight() {
 		return light;
 	}
+	
+	public Projection getProjection() {
+		return projection;
+	}
 
 	public void update(InputManager input, float deltaTime) {
 		torus.update(input, deltaTime);
