@@ -21,6 +21,11 @@ public class Scene {
 	private Shader shader;
 	private int screenWidth;
 	private int screenHeight;
+	
+	//were used to prevent hardcoding values
+	//private float triWidth = 0.5f;
+	//private float triHeight = 0.9f;
+
 
 	
 	public Scene(int width, int height) {
@@ -52,7 +57,7 @@ public class Scene {
 		shader.enable();
 		
 		// connect the vertex buffer t othe a_position attribute
-		shader.setAttribute("a_position", vertexBuffer);
+		shader.setAttribute("a_position", vertexBuffer);//value in the vertex shader - input into vertex shader, core data type to be passed into the vertex shader 
 		
 		// write the colour value into the u_colour uniform
 		Vector3f colour = new Vector3f(0.0f, 0.0f, 0.0f);
